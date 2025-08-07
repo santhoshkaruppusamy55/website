@@ -23,11 +23,12 @@ fi
 DOCKER_USERNAME=$(aws ssm get-parameter --name /docker/username --region ap-south-1 --query Parameter.Value --output text)
 DOCKER_PASSWORD=$(aws ssm get-parameter --name /docker/password --region ap-south-1 --with-decryption --query Parameter.Value --output text)
 
-# Debug (optional - for testing only, remove later)
-echo "Docker username is: $DOCKER_USERNAME"
-# Don't echo the password for security reasons
+# Fail explicitly if values are empty
+if [[ -z "$DOCKER_USERNAME" || -z "$DOCKER_PASSWORD" ]]; then
+  echo "Docker credentials are missing!"
+  exit 1
+fi
 
-# Login to Docker
+# Docker login
 echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-
 echo "Docker login successful"
