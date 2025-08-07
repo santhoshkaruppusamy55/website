@@ -1,0 +1,30 @@
+version: 0.2
+
+env:
+  parameter-store:
+    doc_username: /docker/username
+    doc_password: /docker/password
+    doc_url: /docker/repo/url
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.8
+
+  pre_build:
+    commands:
+      - echo "Installing dependencies"
+      - pip install -r requirements.txt
+      - echo "Logging in to DockerHub"
+      - echo "$doc_password" | docker login -u "$doc_username" --password-stdin
+
+  build:
+    commands:
+      - echo "Building the Docker  image"
+      - docker build -t "$doc_username/website:latest" .
+      - echo "Pushing the  Docker image"
+      - docker push "$doc_username/website:latest"
+
+  post_build:
+    commands:
+      - echo "Build  completed successfully"
