@@ -12,11 +12,8 @@ if [[ -z "$FULL_REPO_URL" ]]; then
 fi
 
 # Extract Docker image name from full URL
-# From: https://hub.docker.com/repository/docker/username/repo-name
-# To: username/repo-name
 REPO_PATH=$(echo "$FULL_REPO_URL" | awk -F'/docker/' '{print $2}')
 
-# Confirm extracted path
 if [[ -z "$REPO_PATH" ]]; then
   echo "Failed to extract image path from DockerHub URL!"
   exit 1

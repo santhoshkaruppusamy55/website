@@ -19,9 +19,9 @@ if ! sudo service docker status | grep -q running; then
     sudo service docker start
 fi
 
-# Get Docker credentials from SSM
-DOCKER_USERNAME=$(aws ssm get-parameter --name /docker/username --region ap-south-1 --query Parameter.Value --output text)
-DOCKER_PASSWORD=$(aws ssm get-parameter --name /docker/password --region ap-south-1 --with-decryption --query Parameter.Value --output text)
+# Get Docker credentials from SSM (with decryption for both)
+DOCKER_USERNAME=$(aws ssm get-parameter --name /docker/username --with-decryption --region ap-south-1 --query Parameter.Value --output text)
+DOCKER_PASSWORD=$(aws ssm get-parameter --name /docker/password --with-decryption --region ap-south-1 --query Parameter.Value --output text)
 
 # Fail explicitly if values are empty
 if [[ -z "$DOCKER_USERNAME" || -z "$DOCKER_PASSWORD" ]]; then
