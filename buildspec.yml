@@ -9,12 +9,11 @@ env:
 phases:
   install:
     runtime-versions:
-      python: 3.8
+      python: 3.9
 
   pre_build:
     commands:
       - echo "Installing dependencies"
-      - pip install -r requirements.txt
       - echo "Logging in to DockerHub"
       - echo "$doc_password" | docker login -u "$doc_username" --password-stdin
 
