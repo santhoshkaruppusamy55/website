@@ -1,11 +1,15 @@
 #!/bin/bash
 set -e
-echo "Stopping existing container"
+echo "Stopping and removing existing container"
 
-container_id=$(docker ps -q -f name=my-app-container)
+# Find the container ID for my-app-container (including all states)
+container_id=$(docker ps -a -q -f name=my-app-container)
+
 if [ -n "$container_id" ]; then
-    docker stop $container_id
-    docker rm -f $container_id
+    echo "Found container $container_id, stopping and removing..."
+    docker stop $container_id 2>/dev/null || true  # Ignore errors if already stopped
+    docker rm -f $container_id  # Force remove
+    echo "Container removed successfully."
 else
-    echo "No container named 'my-app-container' running."
+    echo "No container named 'my-app-container' found."
 fi
