@@ -55,26 +55,26 @@ The project follows a layered architecture to manage the CI/CD process effective
 - Configure GitHub connection and SSM parameters for Docker credentials.
 - Push changes to see the pipeline in action!
 
-Step-by-Step Implementation
-Step 1: Set Up SSM Parameters
+## Step-by-Step Implementation
+## Step 1: Set Up SSM Parameters
 
-In the AWS Console:
+**In the AWS Console**:
 Create /docker/username (String, value: your DockerHub username).
 Create /docker/password (SecureString, value: your DockerHub password or token).
 Create /docker/repo/url (String, value: your-username/website).
 
 
-Step 2: Create IAM Roles
+## Step 2: Create IAM Roles
 
-In IAM:
+**In IAM**:
 CodeBuild Role: Create codebuild-website-service-role with permissions for CodeBuild, SSM, S3, CodeConnections.
 EC2/CodeDeploy Role: Create website-role-ec2 with permissions for CodeDeploy, EC2, SSM, S3.
 CodePipeline Role: Create aws-codepipelineservice-role-ap-south-1-website with permissions for CodePipeline, CodeBuild, CodeDeploy, S3.
 
 
-Step 3: Launch EC2 Instance
+## Step 3: Launch EC2 Instance
 
-In EC2:
+**In EC2**:
 Launch a t2.micro instance with Amazon Linux AMI.
 Add tags (e.g., Key: Name, Value: my-ec2).
 Attach website-role-ec2 role.
@@ -88,9 +88,9 @@ sudo service codedeploy-agent start
 sudo systemctl enable codedeploy-agent
 
 
-Step 4: Create CodeBuild Project
+## Step 4: Create CodeBuild Project
 
-In CodeBuild:
+**In CodeBuild**:
 Project name: website.
 Source: GitHub, connect via AWS-managed GitHub app, select repo, branch main.
 Environment: On-demand, managed image, EC2, container, Amazon Linux, standard runtime, AMI image.
@@ -100,16 +100,16 @@ Enable CloudWatch logs.
 Create the project (no webhooks needed, as pipeline handles them).
 
 
-Step 5: Create CodeDeploy Application and Deployment Group
+## Step 5: Create CodeDeploy Application and Deployment Group
 
-In CodeDeploy:
+**In CodeDeploy**:
 Create application: Name website-app, platform EC2/On-premises.
 Create deployment group: Name website-deployment-group, role website-role-ec2, in-place, EC2 instances (tag: Key Name, Value my-ec2), configuration CodeDeployDefault.AllAtOnce.
 
 
-Step 6: Create CodePipeline
+## Step 6: Create CodePipeline
 
-In CodePipeline:
+**In CodePipeline:**
 Name: website-pipeline.
 Role: aws-codepipelineservice-role-ap-south-1-website.
 Source: GitHub (Version 2), connect via AWS-managed app, repo/branch main, enable webhooks for push (^refs/heads/main), output artifact SourceArtifact.
@@ -118,19 +118,19 @@ Deploy: AWS CodeDeploy, application website-app, group website-deployment-group,
 Create the pipeline.
 
 
-Testing
+## Testing
 
 Push changes to main (e.g., update index.html).
 Monitor the pipeline in the console.
 Verify the app at http://<ec2-public-ip>.
 
-Troubleshooting
+## Troubleshooting
 
 Check CloudWatch logs for CodeBuild.
 SSH into EC2 and check CodeDeploy logs: sudo cat /var/log/aws/codedeploy-agent/codedeploy-agent.log.
 Ensure SSM parameters are correct.
 
-Cleanup
+## Cleanup
 
 Stop/delete EC2 instance to avoid charges.
 Delete the pipeline and S3 bucket.
